@@ -1,25 +1,25 @@
-# 07: Copilot Studio에서 에이전트 개발하고 MCP 서버 연동하기 (선택)
+# 07: Developing an Agent in Copilot Studio and Integrating MCP Server (Optional)
 
-이 세션에서는 앞서 만들었던 [MCP 서버](./05-mcp-server-development.md)를 [Copilot Studio](https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio)의 에이전트에 연동합니다.
+In this session, we will integrate the [MCP server](./05-mcp-server-development.md) we created earlier with an agent in [Copilot Studio](https://learn.microsoft.com/microsoft-copilot-studio/fundamentals-what-is-copilot-studio).
 
-## 세션 목표
+## Session Goals
 
-- 로컬 MCP 서버를 Copilot Studio에 연동시킬 수 있습니다.
-- 리모트 MCP 서버를 Copilot Studio에 연동시킬 수 있습니다.
+- You will be able to integrate a local MCP server with Copilot Studio.
+- You will be able to integrate a remote MCP server with Copilot Studio.
 
-## 아키텍처
+## Architecture
 
-이 세션이 끝나고 나면 아래와 같은 시스템이 만들어집니다.
+After completing this session, the following system will be created.
 
-![세션 아키텍처](./images/step-07-architecture.png)
+![Session Architecture](./images/step-07-architecture.png)
 
-## 사전 준비 사항
+## Prerequisites
 
-이전 [00: 개발 환경 설정](./00-setup.md)에서 개발 환경을 모두 설정한 상태라고 가정합니다.
+It is assumed that you have completed all the development environment setup in the previous [00: Development Environment Setup](./00-setup.md).
 
-## 리포지토리 루트 설정
+## Repository Root Setup
 
-1. 아래 명령어를 실행시켜 `$REPOSITORY_ROOT` 환경 변수를 설정합니다.
+1. Run the following command to set the `$REPOSITORY_ROOT` environment variable.
 
     ```bash
     # zsh/bash
