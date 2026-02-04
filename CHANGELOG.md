@@ -1,4 +1,4 @@
-# Changelog: "**Microsoft Agent Framework Workshop in a Day (KO)**"
+# Changelog: "**Microsoft Agent Framework Workshop in a Day**"
 
 ## x.y.z (yyyy-mm-dd)<a name="x.y.z"></a>
 
