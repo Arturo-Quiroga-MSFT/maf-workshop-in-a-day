@@ -34,9 +34,9 @@ It is assumed that you have completed all the development environment setup in t
     $REPOSITORY_ROOT = git rev-parse --show-toplevel
     ```
 
-## 시작 프로젝트 복사
+## Copying the Starting Project
 
-이 워크샵을 위해 필요한 시작 프로젝트를 준비해 뒀습니다. 시작 프로젝트의 프로젝트 구조는 아래와 같습니다.
+We have prepared the starting project needed for this workshop. The project structure of the starting project is as follows.
 
 ```text
 save-points/
@@ -57,14 +57,14 @@ save-points/
             └── MafWorkshop.McpTodo.csproj
 ```
 
-> 프로젝트 소개:
+> Project Introduction:
 >
-> - `.vscode`: MCP 서버 실행용 설정 파일 디렉토리
-> - `infra`: Azure 클라우드 리소스 배포용 bicep 파일 디렉토리
-> - `MafWorkshop.McpTodo`: To-do 리스트 관리용 MCP 서버 프로젝트
+> - `.vscode`: Configuration file directory for MCP server execution
+> - `infra`: Bicep file directory for Azure cloud resource deployment
+> - `MafWorkshop.McpTodo`: MCP server project for to-do list management
 
-1. 앞서 실습한 `workshop` 디렉토리가 있다면 삭제하거나 다른 이름으로 바꿔주세요. 예) `workshop-step-04`
-1. 터미널을 열고 아래 명령어를 차례로 실행시켜 실습 디렉토리를 만들고 시작 프로젝트를 복사합니다.
+1. If you have a `workshop` directory from the previous exercise, delete it or rename it. Example: `workshop-step-04`
+1. Open a terminal and run the following commands in order to create the exercise directory and copy the starting project.
 
     ```bash
     # zsh/bash
@@ -244,38 +244,38 @@ save-points/
     Copy-Item -Path ./.vscode/mcp.http.local.json -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-1. MCP 서버 애플리케이션을 실행합니다.
+1. Run the MCP server application.
 
     ```bash
     dotnet run --project ./MafWorkshop.McpTodo
     ```
 
-1. 오른쪽 익스텐션 아이콘을 클릭한 후 MCP 서버 섹션을 보면 `todo-list` MCP 서버가 보입니다. 톱니바퀴 모양을 클릭한 후 `Start Server` 메뉴를 클릭해서 MCP 서버를 실행시킵니다.
+1. Click on the right extension icon and look at the MCP Server section where you'll see the `todo-list` MCP server. Click on the gear icon and then click the `Start Server` menu to run the MCP server.
 
-   ![GitHub Copilot - MCP 서버 실행](./images/step-05-image-01.png)
+   ![GitHub Copilot - MCP Server Run](./images/step-05-image-01.png)
 
-1. GitHub Copilot 창을 열어 아래와 같이 `todo-list` MCP 서버를 선택했는지 확인합니다.
+1. Open the GitHub Copilot window and verify that the `todo-list` MCP server is selected as shown below.
 
-   ![GitHub Copilot - MCP 서버 선택](./images/step-05-image-02.png)
+   ![GitHub Copilot - MCP Server Selection](./images/step-05-image-02.png)
 
-1. GitHub Copilot 창에서 아래와 비슷한 프롬프트를 전송합니다.
+1. In the GitHub Copilot window, send prompts similar to the following.
 
     ```text
-    - 오늘 할 일 보여줘
-    - 오후 2시 미팅 추가해줘
+    - Show me today's tasks
+    - Add a 2pm meeting
     ```
 
-   ![GitHub Copilot - MCP 서버 실행](./images/step-05-image-03.png)
+   ![GitHub Copilot - MCP Server Run](./images/step-05-image-03.png)
 
-1. GitHub Copilot이 `todo-list` MCP 서버를 잘 실행시켜 원하는 작업을 수행했는지 확인합니다.
+1. Verify that GitHub Copilot successfully runs the `todo-list` MCP server and performs the desired tasks.
 
-   ![GitHub Copilot - MCP 서버 실행 결과](./images/step-05-image-04.png)
+   ![GitHub Copilot - MCP Server Run Result](./images/step-05-image-04.png)
 
-1. 오른쪽 익스텐션 아이콘을 클릭한 후 MCP 서버 섹션을 보면 `todo-list` MCP 서버가 보입니다. 톱니바퀴 모양을 클릭한 후 `Stop Server` 메뉴를 클릭해서 MCP 서버를 종료합니다.
+1. Click on the right extension icon and look at the MCP Server section where you'll see the `todo-list` MCP server. Click on the gear icon and then click the `Stop Server` menu to stop the MCP server.
 
-   ![GitHub Copilot - MCP 서버 종료](./images/step-05-image-05.png)
+   ![GitHub Copilot - MCP Server Stop](./images/step-05-image-05.png)
 
-1. 터미널에서 `CTRL`+`C` 키를 눌러 애플리케이션 실행을 종료합니다.
+1. Press `CTRL`+`C` in the terminal to stop the application.
 
 ## Connecting to GitHub Copilot from Remote MCP Server
 
@@ -320,46 +320,46 @@ save-points/
     Copy-Item -Path ./.vscode/mcp.http.local.json -Destination $REPOSITORY_ROOT/.vscode/mcp.json -Force
     ```
 
-1. 오른쪽 익스텐션 아이콘을 클릭한 후 MCP 서버 섹션을 보면 `todo-list` MCP 서버가 보입니다. 톱니바퀴 모양을 클릭한 후 `Start Server` 메뉴를 클릭해서 MCP 서버를 실행시킵니다.
+1. Click on the right extension icon and look at the MCP Server section where you'll see the `todo-list` MCP server. Click on the gear icon and then click the `Start Server` menu to run the MCP server.
 
-   ![GitHub Copilot - MCP 서버 실행](./images/step-05-image-01.png)
+   ![GitHub Copilot - MCP Server Run](./images/step-05-image-01.png)
 
-   서버를 실행시키는 과정에서 아래와 같이 리모트 서버의 주소를 물어봅니다. 이 때 앞서 확인했던 리모트 MCP 서버의 주소를 입력하세요.
+   During the process of starting the server, you will be asked for the remote server address as shown below. Enter the remote MCP server address you obtained earlier.
 
-   ![GitHub Copilot - MCP 서버 실행 - 리모트 서버 주소 입력](./images/step-05-image-06.png)
+   ![GitHub Copilot - MCP Server Run - Remote Server Address Input](./images/step-05-image-06.png)
 
-1. GitHub Copilot 창을 열어 아래와 같이 `todo-list` MCP 서버를 선택했는지 확인합니다.
+1. Open the GitHub Copilot window and verify that the `todo-list` MCP server is selected as shown below.
 
-   ![GitHub Copilot - MCP 서버 선택](./images/step-05-image-02.png)
+   ![GitHub Copilot - MCP Server Selection](./images/step-05-image-02.png)
 
-1. GitHub Copilot 창에서 아래와 비슷한 프롬프트를 전송합니다.
+1. In the GitHub Copilot window, send prompts similar to the following.
 
     ```text
-    - 오늘 할 일 보여줘
-    - 오후 2시 미팅 추가해줘
+    - Show me today's tasks
+    - Add a 2pm meeting
     ```
 
-   ![GitHub Copilot - MCP 서버 실행](./images/step-05-image-03.png)
+   ![GitHub Copilot - MCP Server Run](./images/step-05-image-03.png)
 
-1. GitHub Copilot이 `todo-list` MCP 서버를 잘 실행시켜 원하는 작업을 수행했는지 확인합니다.
+1. Verify that GitHub Copilot successfully runs the `todo-list` MCP server and performs the desired tasks.
 
-   ![GitHub Copilot - MCP 서버 실행 결과](./images/step-05-image-04.png)
+   ![GitHub Copilot - MCP Server Run Result](./images/step-05-image-04.png)
 
-1. 오른쪽 익스텐션 아이콘을 클릭한 후 MCP 서버 섹션을 보면 `todo-list` MCP 서버가 보입니다. 톱니바퀴 모양을 클릭한 후 `Stop Server` 메뉴를 클릭해서 MCP 서버를 종료합니다.
+1. Click on the right extension icon and look at the MCP Server section where you'll see the `todo-list` MCP server. Click on the gear icon and then click the `Stop Server` menu to stop the MCP server.
 
-   ![GitHub Copilot - MCP 서버 종료](./images/step-05-image-05.png)
+   ![GitHub Copilot - MCP Server Stop](./images/step-05-image-05.png)
 
-1. 아래 명령어를 실행시켜 방금 배포한 애플리케이션을 모두 삭제합니다.
+1. Run the following command to delete all the applications you just deployed.
 
     ```bash
     azd down --purge --force
 
-## 완성본 결과 확인
+## Verifying the Complete Result
 
-이 세션의 완성본은 `$REPOSITORY_ROOT/save-points/step-05/complete`에서 확인할 수 있습니다.
+The completed version of this session can be found at `$REPOSITORY_ROOT/save-points/step-05/complete`.
 
-1. 앞서 실습한 `workshop` 디렉토리가 있다면 삭제하거나 다른 이름으로 바꿔주세요. 예) `workshop-step-05`
-1. 터미널을 열고 아래 명령어를 차례로 실행시켜 실습 디렉토리를 만들고 시작 프로젝트를 복사합니다.
+1. If you have a `workshop` directory from the previous exercise, delete it or rename it. Example: `workshop-step-05`
+1. Open a terminal and run the following commands in order to create the exercise directory and copy the starting project.
 
     ```bash
     # zsh/bash
