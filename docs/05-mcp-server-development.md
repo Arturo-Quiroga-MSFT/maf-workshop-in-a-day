@@ -1,28 +1,28 @@
-# 05: MCP 서버 개발하기
+# 05: Developing MCP Server
 
-이 세션에서는 백엔드 에이전트에 통합할 [Model Context Protocal(MCP) 서버](https://modelcontextprotocol.io)를 개발합니다.
+In this session, we will develop a [Model Context Protocol (MCP) server](https://modelcontextprotocol.io) to integrate with the backend agent.
 
-## 세션 목표
+## Session Goals
 
-- MCP 서버를 개발할 수 있습니다.
-- 로컬 HTTP 환경에서 MCP 서버를 작동시킬 수 있습니다.
-- MCP 서버를 Azure 클라우드로 배포할 수 있습니다.
-- 리모트 HTTP 환경에서 MCP 서버를 작동시킬 수 있습니다.
-- GitHub Copilot에 로컬 혹은 리모트 MCP 서버를 연결시킬 수 있습니다.
+- You will be able to develop an MCP server.
+- You will be able to run the MCP server in a local HTTP environment.
+- You will be able to deploy the MCP server to Azure cloud.
+- You will be able to run the MCP server in a remote HTTP environment.
+- You will be able to connect a local or remote MCP server to GitHub Copilot.
 
-## 아키텍처
+## Architecture
 
-이 세션이 끝나고 나면 아래와 같은 시스템이 만들어집니다.
+After completing this session, the following system will be created.
 
-![세션 아키텍처](./images/step-05-architecture.png)
+![Session Architecture](./images/step-05-architecture.png)
 
-## 사전 준비 사항
+## Prerequisites
 
-이전 [00: 개발 환경 설정](./00-setup.md)에서 개발 환경을 모두 설정한 상태라고 가정합니다.
+It is assumed that you have completed all the development environment setup in the previous [00: Development Environment Setup](./00-setup.md).
 
-## 리포지토리 루트 설정
+## Repository Root Setup
 
-1. 아래 명령어를 실행시켜 `$REPOSITORY_ROOT` 환경 변수를 설정합니다.
+1. Run the following command to set the `$REPOSITORY_ROOT` environment variable.
 
     ```bash
     # zsh/bash
@@ -80,29 +80,29 @@ save-points/
         Copy-Item -Path $REPOSITORY_ROOT/save-points/step-05/start/* -Destination $REPOSITORY_ROOT/workshop -Recurse -Force
     ```
 
-## 시작 프로젝트 빌드 및 실행
+## Building and Running the Starting Project
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 전체 프로젝트를 빌드합니다.
+1. Build the entire project.
 
     ```bash
     dotnet restore && dotnet build
     ```
 
-## HTTP 방식 MCP 서버 설정하기
+## Configuring HTTP-based MCP Server
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. `./MafWorkshop.McpTodo/Program.cs` 파일을 열고 `// MCP 서버 추가하기` 주석을 찾아 아래 내용을 추가합니다. MCP 서비스를 HTTP 형식의 의존성 개체로 등록합니다.
+1. Open the `./MafWorkshop.McpTodo/Program.cs` file and find the comment `// MCP 서버 추가하기` and add the following content. This registers the MCP service as an HTTP-type dependency object.
 
     ```csharp
     // MCP 서버 추가하기
@@ -111,22 +111,22 @@ save-points/
                     .WithToolsFromAssembly(Assembly.GetEntryAssembly());
     ```
 
-1. 같은 파일에서 `// MCP 엔드포인트 미들웨어 추가하기` 주석을 찾아 아래와 같이 입력합니다. MCP 서버의 엔드포인트를 등록합니다.
+1. In the same file, find the comment `// MCP 엔드포인트 미들웨어 추가하기` and enter the following. This registers the endpoint for the MCP server.
 
     ```csharp
     // MCP 엔드포인트 미들웨어 추가하기
     app.MapMcp("/mcp");
     ```
 
-## MCP 서버에 Tool 추가하기
+## Adding Tools to the MCP Server
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. `./MafWorkshop.McpTodo/Program.cs` 파일을 열고 `// Todo Tool 추가하기` 주석을 찾아 아래 내용을 추가합니다. LLM이 이 MCP 서버를 통해 활용할 수 있는 도구를 작성합니다.
+1. Open the `./MafWorkshop.McpTodo/Program.cs` file and find the comment `// Todo Tool 추가하기` and add the following content. This creates tools that the LLM can utilize through this MCP server.
 
     ```csharp
     // Todo Tool 추가하기
@@ -222,15 +222,15 @@ save-points/
     }
     ```
 
-## 로컬 MCP 서버에서 GitHub Copilot에 연결하기
+## Connecting to GitHub Copilot from Local MCP Server
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 아래 명령어를 실행시켜 `.vscode/mcp.json` 파일을 생성합니다.
+1. Run the following command to create the `.vscode/mcp.json` file.
 
     ```bash
     # zsh/bash
@@ -277,36 +277,36 @@ save-points/
 
 1. 터미널에서 `CTRL`+`C` 키를 눌러 애플리케이션 실행을 종료합니다.
 
-## 리모트 MCP 서버에서 GitHub Copilot에 연결하기
+## Connecting to GitHub Copilot from Remote MCP Server
 
-> **NOTE**: Azure 구독을 제공 받았을 경우 진행하세요. 워크샵에 따라 Azure 구독을 제공하지 않을 수도 있습니다.
+> **NOTE**: Proceed if you have been provided with an Azure subscription. Depending on the workshop, an Azure subscription may not be provided.
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 아래 명령어를 실행시켜 MCP 서버를 배포하세요.
+1. Run the following command to deploy the MCP server.
 
     ```bash
     azd up
     ```
 
-   아래와 같은 질문이 나오면 적당하게 입력합니다.
+   When the following questions appear, enter appropriate values.
 
-   - `? Enter a unique environment name:` 👉 환경 이름 (예: `mafworkshop-2026`)
-   - `? Enter a value for the 'location' infrastructure parameter:` 👉 지역 선택 (예: `Korea Central`)
+   - `? Enter a unique environment name:` 👉 Environment name (e.g., `mafworkshop-2026`)
+   - `? Enter a value for the 'location' infrastructure parameter:` 👉 Select region (e.g., `Korea Central`)
 
-   잠시 기다리면 MCP 서버를 배포한 Azure Container Apps 인스턴스가 만들어진 것을 확인할 수 있습니다.
+   Wait a moment and you can verify that the Azure Container Apps instance for the MCP server has been created.
 
-1. 아래 명령어를 실행시켜 Azure Container Apps 인스턴스의 URL 값을 확인합니다. URL의 형식은 `mafworkshop-mcptodo.{랜덤문자열}-{랜덤숫자}.{지역}.azurecontainerapps.io`입니다.
+1. Run the following command to get the URL value of the Azure Container Apps instance. The URL format is `mafworkshop-mcptodo.{randomstring}-{randomnumber}.{region}.azurecontainerapps.io`.
 
     ```bash
     azd env get-value AZURE_RESOURCE_MAFWORKSHOP_MCPTODO_FQDN
     ```
 
-1. 아래 명령어를 실행시켜 `.vscode/mcp.json` 파일을 생성합니다.
+1. Run the following command to create the `.vscode/mcp.json` file.
 
     ```bash
     # zsh/bash
@@ -373,17 +373,17 @@ save-points/
         Copy-Item -Path $REPOSITORY_ROOT/save-points/step-04/complete/* -Destination $REPOSITORY_ROOT/workshop -Recurse -Force
     ```
 
-1. 워크샵 디렉토리로 이동합니다.
+1. Navigate to the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. [로컬 MCP 서버에서 GitHub Copilot에 연결하기](#로컬-mcp-서버에서-github-copilot에-연결하기) 섹션을 따라합니다.
-1. [리모트 MCP 서버에서 GitHub Copilot에 연결하기](#리모트-mcp-서버에서-github-copilot에-연결하기) 섹션을 따라합니다.
+1. Follow the [Connecting to GitHub Copilot from Local MCP Server](#connecting-to-github-copilot-from-local-mcp-server) section.
+1. Follow the [Connecting to GitHub Copilot from Remote MCP Server](#connecting-to-github-copilot-from-remote-mcp-server) section.
 
 ---
 
-축하합니다! 에이전트에 사용하기 위한 MCP 서버를 직접 개발했습니다. 이제 다음 단계로 이동하세요!
+Congratulations! You have developed an MCP server for use with agents. Now proceed to the next step!
 
-👈 [04: Aspire로 프론트엔드 웹 UI와 백엔드 에이전트 오케스트레이션하기](./04-aspire-orchestration.md) | [06: Microsoft Agent Framework에 MCP 서버 연동하기](./06-mcp-server-integration-with-maf.md) 👉
+👈 [04: Orchestrating Frontend Web UI and Backend Agent with Aspire](./04-aspire-orchestration.md) | [06: Integrating MCP Server with Microsoft Agent Framework](./06-mcp-server-integration-with-maf.md) 👉
