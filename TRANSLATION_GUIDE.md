@@ -43,8 +43,8 @@ Priority translation list:
 1. ✅ **README.md** (completed)
 2. ✅ **CONTRIBUTING.md** (completed)
 3. ✅ **CHANGELOG.md** (completed)
-4. ⏳ **docs/00-setup.md** (in progress - needs translation)
-5. ⏳ **docs/01-single-agent-with-maf.md** (pending)
+4. ✅ **docs/00-setup.md** (completed)
+5. ⏳ **docs/01-single-agent-with-maf.md** (pending - ~380 lines)
 6. ⏳ **docs/02-ui-integration-with-maf.md** (pending)
 7. ⏳ **docs/03-multi-agent-with-maf.md** (pending)
 8. ⏳ **docs/04-aspire-orchestration.md** (pending)
@@ -52,24 +52,79 @@ Priority translation list:
 10. ⏳ **docs/06-mcp-server-integration-with-maf.md** (pending)
 11. ⏳ **docs/07-mcp-server-integration-with-copilot-studio.md** (pending)
 
-### 3. Translation Approach
+### 3. Technical Translation Workflow (RECOMMENDED)
 
-For each file:
-1. Open the file in the `english` branch
-2. Keep all code snippets, commands, and file paths unchanged
-3. Translate:
-   - Headings
-   - Paragraphs
-   - Comments (Korean text in the documentation)
-   - UI messages (when mentioned)
-4. **DO NOT translate**:
-   - Code
-   - Commands
-   - URLs
-   - File paths
-   - Package names
+**Best Practice: Use `multi_replace_string_in_file` for efficiency**
 
-### 4. Using AI for Translation
+Based on experience translating docs/00-setup.md, here's the proven workflow:
+
+#### Step 1: Read the file
+```bash
+# Check file structure and line count
+wc -l docs/filename.md
+```
+
+#### Step 2: Translate in sections
+- Break the file into logical sections (headings, paragraphs)
+- Translate 3-5 sections at a time using `multi_replace_string_in_file`
+- This allows for batch edits while maintaining accuracy
+
+#### Step 3: Match text exactly
+- Copy the **exact Korean text** including:
+  - Unicode characters
+  - Whitespace
+  - Line breaks
+  - Punctuation
+- Include 3-5 lines of context before and after the target text
+
+#### Step 4: What to translate
+✅ **TRANSLATE:**
+- Headings (`## 사전 준비 사항` → `## Prerequisites`)
+- Paragraphs and explanatory text
+- Inline notes and warnings
+- List items (non-code)
+- Comments in text (not in code blocks)
+
+❌ **DO NOT TRANSLATE:**
+- Code blocks (```bash, ```powershell, etc.)
+- Command-line commands
+- URLs and links
+- File paths
+- Package names
+- Variable names
+- API endpoints
+- Error messages (keep as-is for debugging)
+
+#### Step 5: Commit after each file
+```bash
+git add docs/filename.md
+git commit -m "Translate docs/filename.md to English
+
+- Translated all Korean text to English
+- Kept all code blocks, commands, and URLs unchanged
+- Maintained original structure and formatting"
+git push origin english
+```
+
+### 4. Example Translation Pattern
+
+Here's a working example from docs/00-setup.md:
+
+```javascript
+// Original Korean
+"oldString": "## 사전 준비 사항\n\n- 크로미움 계열 웹브라우저..."
+
+// English Translation  
+"newString": "## Prerequisites\n\n- A Chromium-based web browser..."
+```
+
+**Key Points:**
+- Use `\n` for line breaks in multi-line replacements
+- Match Korean Unicode exactly (use copy-paste)
+- Keep markdown formatting identical
+- Preserve emojis and special characters (👉, ✅, etc.)
+
+### 5. Using AI for Translation
 
 You can use GitHub Copilot or other AI tools to help translate:
 
@@ -80,7 +135,35 @@ keeping all code blocks, commands, URLs, and file paths unchanged.
 Only translate the Korean text:"
 ```
 
-### 5. Syncing Strategy
+### 6. Translation Quality Checklist
+
+Before committing a translated file, verify:
+
+- [ ] All Korean text is translated to English
+- [ ] All code blocks remain unchanged
+- [ ] All commands remain unchanged
+- [ ] All URLs and links work correctly
+- [ ] Markdown formatting is preserved
+- [ ] Section navigation links are updated (if they reference Korean text)
+- [ ] File builds/renders correctly as markdown
+- [ ] Emojis and special characters are preserved
+- [ ] Technical terms are translated consistently
+
+### 7. Common Translation Patterns
+
+| Korean | English |
+|--------|---------|
+| 사전 준비 사항 | Prerequisites |
+| 세션 | Session |
+| 워크샵 | Workshop |
+| 개발 환경 | Development Environment |
+| 설정 | Setup / Configuration |
+| 실행 | Run / Execute |
+| 확인 | Verify / Check |
+| 아래 명령어를 실행 | Run the following command |
+| 축하합니다 | Congratulations |
+
+### 8. Syncing Strategy
 
 - **Weekly or monthly**: Merge latest changes from upstream Korean version
 - **After each merge**: Review and update English translations where needed
