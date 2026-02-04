@@ -1,24 +1,24 @@
-# 02: Microsoft Agent Framework에 프론트엔드 UI 연동하기
+# 02: Integrating Frontend UI with Microsoft Agent Framework
 
-이 세션에서는 Microsoft Agent Framework로 만들어진 백엔드 에이전트에 [AG-UI 프로토콜](https://docs.ag-ui.com/introduction)을 활용해서 프론트엔드 웹 UI를 연동합니다.
+This session covers integrating a frontend web UI with the backend agent built with Microsoft Agent Framework using the [AG-UI protocol](https://docs.ag-ui.com/introduction).
 
-## 세션 목표
+## Session Goals
 
-- Microsoft Agent Framework에 AG-UI 프로토콜을 이용해서 프론트엔드 UI를 연결할 수 있습니다.
+- Connect a frontend UI to Microsoft Agent Framework using the AG-UI protocol.
 
-## 아키텍처
+## Architecture
 
-이 세션이 끝나고 나면 아래와 같은 시스템이 만들어집니다.
+Upon completing this session, you will have built the following system.
 
-![세션 아키텍처](./images/step-02-architecture.png)
+![Session Architecture](./images/step-02-architecture.png)
 
-## 사전 준비 사항
+## Prerequisites
 
-이전 [00: 개발 환경 설정](./00-setup.md)에서 개발 환경을 모두 설정한 상태라고 가정합니다.
+This assumes you have completed all the development environment setup from [00: Development Environment Setup](./00-setup.md).
 
-## 리포지토리 루트 설정
+## Setting Repository Root
 
-1. 아래 명령어를 실행시켜 `$REPOSITORY_ROOT` 환경 변수를 설정합니다.
+1. Run the following command to set the `$REPOSITORY_ROOT` environment variable.
 
     ```bash
     # zsh/bash
@@ -30,9 +30,9 @@
     $REPOSITORY_ROOT = git rev-parse --show-toplevel
     ```
 
-## 시작 프로젝트 복사
+## Copying the Starting Project
 
-이 워크샵을 위해 필요한 시작 프로젝트를 준비해 뒀습니다. 시작 프로젝트의 프로젝트 구조는 아래와 같습니다.
+We have prepared the necessary starting project for this workshop. The project structure of the starting project is as follows:
 
 ```text
 save-points/
@@ -57,13 +57,13 @@ save-points/
             └── MafWorkshop.WebUI.csproj
 ```
 
-> 프로젝트 소개:
+> Project overview:
 >
-> - `MafWorkshop.Agent`: 백엔드 에이전트 애플리케이션 프로젝트
-> - `MafWorkshop.WebUI`: 프론트엔드 웹 UI 애플리케이션 프로젝트
+> - `MafWorkshop.Agent`: Backend agent application project
+> - `MafWorkshop.WebUI`: Frontend web UI application project
 
-1. 앞서 실습한 `workshop` 디렉토리가 있다면 삭제하거나 다른 이름으로 바꿔주세요. 예) `workshop-step-01`
-1. 터미널을 열고 아래 명령어를 차례로 실행시켜 실습 디렉토리를 만들고 시작 프로젝트를 복사합니다.
+1. If you have the `workshop` directory from the previous exercise, delete it or rename it. For example: `workshop-step-01`
+1. Open a terminal and run the following commands in order to create the workshop directory and copy the starting project.
 
     ```bash
     # zsh/bash
@@ -79,45 +79,45 @@ save-points/
         Copy-Item -Path $REPOSITORY_ROOT/save-points/step-02/start/* -Destination $REPOSITORY_ROOT/workshop -Recurse -Force
     ```
 
-## 시작 프로젝트 빌드 및 실행
+## Building and Running the Starting Project
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 전체 프로젝트를 빌드합니다.
+1. Build the entire project.
 
     ```bash
     dotnet restore && dotnet build
     ```
 
-1. 다른 터미널을 열고 프론트엔드 UI 애플리케이션을 실행합니다.
+1. Open another terminal and run the frontend UI application.
 
     ```bash
     dotnet watch run --project ./MafWorkshop.WebUI
     ```
 
-1. 자동으로 웹 브라우저가 열리면서 아래와 같은 챗 UI 페이지가 나타나는지 확인합니다.
+1. Verify that the web browser opens automatically and shows a chat UI page as below.
 
-   ![웹 UI 페이지](./images/step-02-image-01.png)
+   ![Web UI Page](./images/step-02-image-01.png)
 
-   아무 메시지나 넣고 아래와 같이 가짜 응답이 나오는 것을 확인합니다.
+   Enter any message and verify that a fake response appears as shown below.
 
-   ![웹 UI 페이지 - 가짜 응답](./images/step-02-image-02.png)
+   ![Web UI Page - Fake Response](./images/step-02-image-02.png)
 
-1. 터미널에서 `CTRL`+`C` 키를 눌러 애플리케이션 실행을 종료합니다.
+1. Press `CTRL`+`C` in the terminal to stop the application execution.
 
-## 백엔드 에이전트 앱 AG-UI 프로토콜 연동
+## Integrating AG-UI Protocol with Backend Agent App
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. `./MafWorkshop.Agent/appsettings.json` 파일을 열고 `LlmProvider` 값이 `GitHubModels`인지 확인합니다. 만약 다른 값으로 되어 있으면 `GitHubModels`로 변경합니다.
+1. Open the `./MafWorkshop.Agent/appsettings.json` file and verify that the `LlmProvider` value is `GitHubModels`. If it's set to a different value, change it to `GitHubModels`.
 
     ```jsonc
     {
@@ -125,16 +125,16 @@ save-points/
     }
     ```
 
-   > **Azure 구독이 있는 경우**, `GitHubModels` 대신 `AzureOpenAI`로도 바꿔보세요.
+   > **If you have an Azure subscription**, try changing `GitHubModels` to `AzureOpenAI`.
 
-1. `./MafWorkshop.Agent/Program.cs` 파일을 열고 `// AG-UI 등록하기` 주석을 찾아 아래 내용을 추가합니다. 에이전트 앱에 AG-UI 서비스를 사용할 수 있는 서비스 인스턴스를 별도로 로직을 구현하지 않고 직접 의존성 개체로 등록합니다.
+1. Open the `./MafWorkshop.Agent/Program.cs` file and find the comment `// AG-UI 등록하기` and add the following content. Directly register service instances that enable AG-UI service usage in the agent app as dependency objects without implementing separate logic.
 
     ```csharp
     // AG-UI 등록하기
     builder.Services.AddAGUI();
     ```
 
-1. 같은 파일에서 `// AG-UI 미들웨어 설정하기` 주석을 찾아 아래와 같이 입력합니다. 이 미들웨어를 통해 백엔드 에이전트 앱에 `/ag-ui` 엔드포인트를 추가한 후 이 엔드포인트를 Writer 에이전트로 연결합니다.
+1. In the same file, find the comment `// AG-UI 미들웨어 설정하기` and enter the following. Through this middleware, add the `/ag-ui` endpoint to the backend agent app and connect this endpoint to the Writer agent.
 
     ```csharp
     // AG-UI 미들웨어 설정하기
@@ -144,15 +144,15 @@ save-points/
     );
     ```
 
-## 프론트엔드 UI 앱 AG-UI 프로토콜 연동
+## Integrating AG-UI Protocol with Frontend UI App
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. `./MafWorkshop.WebUI/appsettings.json` 파일을 열고 `AgentEndpoints` 섹션에 아래와 같은 값이 있는지 확인합니다. 만약 아니라면, 아래와 같이 맞춰주세요.
+1. Open the `./MafWorkshop.WebUI/appsettings.json` file and verify that the `AgentEndpoints` section has the following values. If not, adjust them as shown below.
 
     ```jsonc
     {
@@ -163,7 +163,7 @@ save-points/
     }
     ```
 
-1. `./MafWorkshop.WebUI/Program.cs` 파일을 열고 `// HttpClientFactory 등록하기` 주석을 찾아 아래 내용을 추가합니다. `HttpClient` 인스턴스를 `agent`라는 이름으로 등록해서 백엔드 에이전트 애플리케이션을 찾습니다.
+1. Open the `./MafWorkshop.WebUI/Program.cs` file and find the comment `// HttpClientFactory 등록하기` and add the following content. Register an `HttpClient` instance with the name `agent` to find the backend agent application.
 
     ```csharp
     // HttpClientFactory 등록하기
@@ -176,14 +176,14 @@ save-points/
     });
     ```
 
-1. 같은 파일에서 `// AG-UI 연동 IChatClient 인스턴스 등록하기` 주석을 찾아 아래와 같은지 확인합니다. 현재 가짜 응답을 생성하는 `FakeChatClient`를 연결한 상태입니다.
+1. In the same file, find the comment `// AG-UI 연동 IChatClient 인스턴스 등록하기` and verify it looks like the following. Currently it's connected to `FakeChatClient` which generates fake responses.
 
     ```csharp
     // AG-UI 연동 IChatClient 인스턴스 등록하기
     builder.Services.AddChatClient(new FakeChatClient());
     ```
 
-   이를 아래와 같이 수정합니다. 백엔드 에이전트 앱의 `/ag-ui` 엔드포인트에 앞서 등록한 `agent` 이름의 `HttpClient` 인스턴스를 연결합니다.
+   Modify it as follows. Connect the `HttpClient` instance with the name `agent` registered earlier to the `/ag-ui` endpoint of the backend agent app.
 
     ```csharp
     // AG-UI 연동 IChatClient 인스턴스 등록하기
@@ -193,48 +193,48 @@ save-points/
     );
     ```
 
-## 애플리케이션 빌드 및 실행
+## Building and Running the Application
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 전체 프로젝트를 빌드합니다.
+1. Build the entire project.
 
     ```bash
     dotnet restore && dotnet build
     ```
 
-1. 백엔드 에이전트 애플리케이션을 실행합니다.
+1. Run the backend agent application.
 
     ```bash
     dotnet run --project ./MafWorkshop.Agent
     ```
 
-1. 다른 터미널을 열고 프론트엔드 UI 애플리케이션을 실행합니다.
+1. Open another terminal and run the frontend UI application.
 
     ```bash
     dotnet watch run --project ./MafWorkshop.WebUI
     ```
 
-1. 자동으로 웹 브라우저가 열리면서 아래와 같은 챗 UI 페이지가 나타나는지 확인합니다.
+1. Verify that the web browser opens automatically and shows a chat UI page as below.
 
-   ![웹 UI 페이지](./images/step-02-image-01.png)
+   ![Web UI Page](./images/step-02-image-01.png)
 
-   아무 문장이나 입력한 후 결과를 확인합니다.
+   Enter any sentence and check the results.
 
-   ![웹 UI 페이지 - 결과 확인](./images/step-02-image-03.png)
+   ![Web UI Page - Results Verification](./images/step-02-image-03.png)
 
-1. 두 터미널에서 각각 `CTRL`+`C` 키를 눌러 모든 애플리케이션 실행을 종료합니다.
+1. Press `CTRL`+`C` in each terminal to stop all application execution.
 
-## 완성본 결과 확인
+## Verifying the Complete Result
 
-이 세션의 완성본은 `$REPOSITORY_ROOT/save-points/step-02/complete`에서 확인할 수 있습니다.
+The completed version of this session can be found at `$REPOSITORY_ROOT/save-points/step-02/complete`.
 
-1. 앞서 실습한 `workshop` 디렉토리가 있다면 삭제하거나 다른 이름으로 바꿔주세요. 예) `workshop-step-02`
-1. 터미널을 열고 아래 명령어를 차례로 실행시켜 실습 디렉토리를 만들고 시작 프로젝트를 복사합니다.
+1. If you have the `workshop` directory from the previous exercise, delete it or rename it. For example: `workshop-step-02`
+1. Open a terminal and run the following commands in order to create the workshop directory and copy the starting project.
 
     ```bash
     # zsh/bash
@@ -248,16 +248,16 @@ save-points/
         Copy-Item -Path $REPOSITORY_ROOT/save-points/step-02/complete/* -Destination $REPOSITORY_ROOT/workshop -Recurse -Force
     ```
 
-1. 워크샵 디렉토리로 이동합니다.
+1. Move to the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. [애플리케이션 빌드 및 실행](#애플리케이션-빌드-및-실행) 섹션을 따라합니다.
+1. Follow the [Building and Running the Application](#building-and-running-the-application) section.
 
 ---
 
-축하합니다! 에이전트 백엔드에 AG-UI 프로토콜을 활용해서 프론트엔드를 연결했습니다. 이제 다음 단계로 이동하세요!
+Congratulations! You have connected the frontend to the agent backend using the AG-UI protocol. Now proceed to the next step!
 
-👈 [01: Microsoft Agent Framework 사용해서 단일 에이전트 개발하기](./01-single-agent-with-maf.md) | [03: Microsoft Agent Framework 사용해서 다중 에이전트 개발하기](./03-multi-agent-with-maf.md) 👉
+👈 [01: Building a Single Agent with Microsoft Agent Framework](./01-single-agent-with-maf.md) | [03: Building Multi-Agent with Microsoft Agent Framework](./03-multi-agent-with-maf.md) 👉
