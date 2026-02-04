@@ -1,26 +1,26 @@
-# 01: Microsoft Agent Framework 사용해서 단일 에이전트 개발하기
+# 01: Building a Single Agent with Microsoft Agent Framework
 
-이 세션에서는 Microsoft Agent Framework를 사용해서 단일 에이전트 백엔드 애플리케이션을 개발합니다.
+This session covers developing a single agent backend application using Microsoft Agent Framework.
 
-## 세션 목표
+## Session Goals
 
-- Microsoft Agent Framework에 다양한 LLM을 연결할 수 있습니다.
-- Microsoft Agent Framework에 단일 에이전트를 붙일 수 있습니다.
-- Microsoft Agent Framework에서 동작하는 에이전트의 흐름을 시각화할 수 있습니다.
+- Connect various LLMs to Microsoft Agent Framework.
+- Attach a single agent to Microsoft Agent Framework.
+- Visualize the flow of agents running in Microsoft Agent Framework.
 
-## 아키텍처
+## Architecture
 
-이 세션이 끝나고 나면 아래와 같은 시스템이 만들어집니다.
+Upon completing this session, you will have built the following system.
 
-![세션 아키텍처](./images/step-01-architecture.png)
+![Session Architecture](./images/step-01-architecture.png)
 
-## 사전 준비 사항
+## Prerequisites
 
-이전 [00: 개발 환경 설정하기](./00-setup.md)에서 개발 환경을 모두 설정한 상태라고 가정합니다.
+This assumes you have completed all the development environment setup from [00: Development Environment Setup](./00-setup.md).
 
-## 리포지토리 루트 설정
+## Setting Repository Root
 
-1. 아래 명령어를 실행시켜 `$REPOSITORY_ROOT` 환경 변수를 설정합니다.
+1. Run the following command to set the `$REPOSITORY_ROOT` environment variable.
 
     ```bash
     # zsh/bash
@@ -32,9 +32,9 @@
     $REPOSITORY_ROOT = git rev-parse --show-toplevel
     ```
 
-## 시작 프로젝트 복사
+## Copying the Starting Project
 
-이 워크샵을 위해 필요한 시작 프로젝트를 준비해 뒀습니다. 시작 프로젝트의 프로젝트 구조는 아래와 같습니다.
+We have prepared the necessary starting project for this workshop. The project structure of the starting project is as follows:
 
 ```text
 save-points/
@@ -49,11 +49,11 @@ save-points/
             └── MafWorkshop.Agent.csproj
 ```
 
-> 프로젝트 소개:
+> Project overview:
 >
-> - `MafWorkshop.Agent`: 백엔드 에이전트 애플리케이션 프로젝트
+> - `MafWorkshop.Agent`: Backend agent application project
 
-1. 터미널을 열고 아래 명령어를 차례로 실행시켜 실습 디렉토리를 만들고 시작 프로젝트를 복사합니다.
+1. Open a terminal and run the following commands in order to create the workshop directory and copy the starting project.
 
     ```bash
     # zsh/bash
@@ -67,24 +67,24 @@ save-points/
         Copy-Item -Path $REPOSITORY_ROOT/save-points/step-01/start/* -Destination $REPOSITORY_ROOT/workshop -Recurse -Force
     ```
 
-## LLM 접근 권한 설정
+## Setting Up LLM Access
 
-이전 [00: 개발 환경 설정](./00-setup.md)에서 GitHub Models 접근을 위한 PAT과 Azure OpenAI 인스턴스 생성 후 접근을 위한 API 키를 생성했습니다. 이를 애플리케이션에서 사용할 수 있도록 합니다.
+In the previous [00: Development Environment Setup](./00-setup.md), we created a PAT for GitHub Models access and an API key for Azure OpenAI instance access. Let's configure these for use in the application.
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 아래 명령어를 실행시켜 앞서 생성한 값을 저장합니다.
+1. Run the following command to save the previously generated values.
 
     ```bash
     # GitHub Models
     dotnet user-secrets --project ./MafWorkshop.Agent set GitHub:Token $githubToken
     ```
 
-   아래는 Azure 구독이 있는 경우에만 실행하세요.
+   Run the following only if you have an Azure subscription.
 
     ```bash
     # Azure OpenAI
@@ -92,43 +92,43 @@ save-points/
     dotnet user-secrets --project ./MafWorkshop.Agent set Azure:OpenAI:ApiKey $apiKey
     ```
 
-## 시작 프로젝트 빌드 및 실행
+## Building and Running the Starting Project
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 전체 프로젝트를 빌드합니다.
+1. Build the entire project.
 
     ```bash
     dotnet restore && dotnet build
     ```
 
-1. 애플리케이션을 실행합니다.
+1. Run the application.
 
     ```bash
     dotnet watch run --project ./MafWorkshop.Agent
     ```
 
-1. 자동으로 웹 브라우저가 열리면서 404 에러 페이지가 나타나는지 확인합니다.
+1. Verify that the web browser opens automatically and shows a 404 error page.
 
-   ![404 에러페이지](./images/step-01-image-01.png)
+   ![404 Error Page](./images/step-01-image-01.png)
 
-   현재 아무것도 추가하지 않았으므로 당연하게 404 에러 페이지가 나타나야 합니다.
+   Since nothing has been added yet, a 404 error page should appear as expected.
 
-1. 터미널에서 `CTRL`+`C` 키를 눌러 애플리케이션 실행을 종료합니다.
+1. Press `CTRL`+`C` in the terminal to stop the application execution.
 
-## LLM 연결
+## Connecting LLM
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. `./MafWorkshop.Agent/appsettings.json` 파일을 열고 `LlmProvider` 값이 `GitHubModels`인지 확인합니다. 만약 다른 값으로 되어 있으면 `GitHubModels`로 변경합니다.
+1. Open the `./MafWorkshop.Agent/appsettings.json` file and verify that the `LlmProvider` value is `GitHubModels`. If it's set to a different value, change it to `GitHubModels`.
 
     ```jsonc
     {
@@ -136,7 +136,7 @@ save-points/
     }
     ```
 
-1. `./MafWorkshop.Agent/Program.cs` 파일을 열고 `// ChatClientFactory 클래스 추가하기` 주석을 찾아 아래 내용을 추가합니다. 아래 코드는 `IConfiguration` 인스턴스에서 `LlmProvider` 값을 찾아 그 값이 `GitHubModels`이면 GitHub Models 연결 정보를 이용해서 `IChatClient` 인스턴스를 생성하고, `AzureOpenAI`이면 Azure OpenAI 연결 정보를 이용해서 `IChatClient` 인스턴스를 생성하는 팩토리 메서드 패턴입니다.
+1. Open the `./MafWorkshop.Agent/Program.cs` file and find the comment `// ChatClientFactory 클래스 추가하기` and add the following content. The code below is a factory method pattern that finds the `LlmProvider` value from the `IConfiguration` instance, creates an `IChatClient` instance using GitHub Models connection information if the value is `GitHubModels`, and creates an `IChatClient` instance using Azure OpenAI connection information if it's `AzureOpenAI`.
 
     ```csharp
     // ChatClientFactory 클래스 추가하기
@@ -204,29 +204,29 @@ save-points/
     }
     ```
 
-1. 같은 파일에서 `// IChatClient 인스턴스 생성하기` 주석을 찾아 아래와 같이 입력합니다. 앞서 작성한 팩토리 메서드 패턴을 이용해 GitHub Models 또는 Azure OpenAI 인스턴스를 `IChatClient` 타입으로 생성합니다.
+1. In the same file, find the comment `// IChatClient 인스턴스 생성하기` and enter the following. Use the factory method pattern created earlier to generate a GitHub Models or Azure OpenAI instance as `IChatClient` type.
 
     ```csharp
     // IChatClient 인스턴스 생성하기
     IChatClient? chatClient = ChatClientFactory.CreateChatClient(builder.Configuration);
     ```
 
-1. 같은 파일에서 `// IChatClient 인스턴스 등록하기` 주석을 찾아 아래와 같이 입력합니다. 앞서 생성한 `IChatClient` 인스턴스를 의존성 개체로 등록합니다.
+1. In the same file, find the comment `// IChatClient 인스턴스 등록하기` and enter the following. Register the `IChatClient` instance created earlier as a dependency object.
 
     ```csharp
     // IChatClient 인스턴스 등록하기
     builder.Services.AddChatClient(chatClient);
     ```
 
-## 단일 에이전트 생성
+## Creating a Single Agent
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. `./MafWorkshop.Agent/Program.cs` 파일을 열고 `// Writer 에이전트 추가하기` 주석을 찾아 아래와 같이 입력합니다. 에이전트는 다양한 방법으로 추가할 수 있지만, 여기서는 가장 간단한 방법으로 에이전트 이름과 페르소나/지침을 입력합니다.
+1. Open the `./MafWorkshop.Agent/Program.cs` file and find the comment `// Writer 에이전트 추가하기` and enter the following. Agents can be added in various ways, but here we use the simplest method by entering the agent name and persona/instructions.
 
     ```csharp
     // Writer 에이전트 추가하기
@@ -236,7 +236,7 @@ save-points/
     );
     ```
 
-1. 같은 파일에서 `// OpenAI 관련 응답 히스토리 핸들러 등록하기` 주석을 찾아 아래와 같이 입력합니다. 에이전트가 생성하는 응답과 대화 히스토리를 저장하는 서비스 인스턴스를 별도로 로직을 구현하지 않고 직접 의존성 개체로 등록합니다.
+1. In the same file, find the comment `// OpenAI 관련 응답 히스토리 핸들러 등록하기` and enter the following. Directly register service instances that store the responses and conversation history generated by the agent as dependency objects without implementing separate logic.
 
     ```csharp
     // OpenAI 관련 응답 히스토리 핸들러 등록하기
@@ -244,7 +244,7 @@ save-points/
     builder.Services.AddOpenAIConversations();
     ```
 
-1. 같은 파일에서 `// OpenAI 관련 응답 히스토리 미들웨어 설정하기` 주석을 찾아 아래와 같이 입력합니다. 에이전트가 생성하는 응답과 대화 히스토리를 호출하는 엔드포인트를 미들웨어를 통해 각각 추가합니다.
+1. In the same file, find the comment `// OpenAI 관련 응답 히스토리 미들웨어 설정하기` and enter the following. Add endpoints that invoke the responses and conversation history generated by the agent through middleware.
 
     ```csharp
     // OpenAI 관련 응답 히스토리 미들웨어 설정하기
@@ -252,15 +252,15 @@ save-points/
     app.MapOpenAIConversations();
     ```
 
-## Dev UI 추가
+## Adding Dev UI
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. `./MafWorkshop.Agent/Program.cs` 파일을 열고 `// Dev UI 미들웨어 설정하기` 주석을 찾아 아래와 같이 입력합니다. 로컬 개발환경에서 Dev UI 화면을 로딩할 수 있도록 `/devui` 엔드포인트를 미들웨어를 통해 추가합니다.
+1. Open the `./MafWorkshop.Agent/Program.cs` file and find the comment `// Dev UI 미들웨어 설정하기` and enter the following. Add the `/devui` endpoint through middleware to load the Dev UI screen in the local development environment.
 
     ```csharp
     if (builder.Environment.IsDevelopment() == false)
@@ -274,29 +274,29 @@ save-points/
     }
     ```
 
-## 단일 에이전트 실행
+## Running the Single Agent
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 애플리케이션을 실행합니다.
+1. Run the application.
 
     ```bash
     dotnet run --project ./MafWorkshop.Agent
     ```
 
-1. 터미널에 현재 GitHub Models를 연결했다는 메시지가 나타나는 것을 확인합니다.
+1. Verify that the terminal shows a message indicating GitHub Models is currently connected.
 
     ```text
     Using GitHubModels: openai/gpt-5-mini
     ```
 
-1. 터미널에서 `CTRL`+`C`를 눌러 애플리케이션을 종료합니다.
+1. Press `CTRL`+`C` in the terminal to stop the application.
 
-1. **Azure 구독이 있을 경우** `./MafWorkshop.Agent/appsettings.json` 파일을 열어 아래와 같이 `LlmProvider` 값을 `AzureOpenAI`로 바꿔봅니다.
+1. **If you have an Azure subscription**, open the `./MafWorkshop.Agent/appsettings.json` file and change the `LlmProvider` value to `AzureOpenAI` as follows.
 
     ```jsonc
     {
@@ -308,42 +308,42 @@ save-points/
     }
     ```
 
-1. 애플리케이션을 실행합니다.
+1. Run the application.
 
     ```bash
     dotnet run --project ./MafWorkshop.Agent
     ```
 
-1. 터미널에 현재 Azure OpenAI를 연결했다는 메시지가 나타나는 것을 확인합니다.
+1. Verify that the terminal shows a message indicating Azure OpenAI is currently connected.
 
     ```text
     Using AzureOpenAI: gpt-5-mini
     ```
 
-1. 터미널에서 `CTRL`+`C`를 눌러 애플리케이션을 종료합니다.
+1. Press `CTRL`+`C` in the terminal to stop the application.
 
-1. 다시 애플리케이션을 실행합니다.
+1. Run the application again.
 
     ```bash
     dotnet watch run --project ./MafWorkshop.Agent
     ```
 
-1. 자동으로 웹 브라우저가 열리면서 DevUI 페이지가 나타나는지 확인합니다.
+1. Verify that the web browser opens automatically and shows the DevUI page.
 
-   ![DevUI 페이지 - 단일 에이전트](./images/step-01-image-02.png)
+   ![DevUI Page - Single Agent](./images/step-01-image-02.png)
 
-   메시지를 보내고 결과를 확인해 봅니다.
+   Send a message and check the results.
 
-   ![Writer 에이전트 실행 결과](./images/step-01-image-03.png)
+   ![Writer Agent Execution Result](./images/step-01-image-03.png)
 
-1. 터미널에서 `CTRL`+`C` 키를 눌러 애플리케이션 실행을 종료합니다.
+1. Press `CTRL`+`C` in the terminal to stop the application execution.
 
-## 완성본 결과 확인
+## Verifying the Complete Result
 
-이 세션의 완성본은 `$REPOSITORY_ROOT/save-points/step-01/complete`에서 확인할 수 있습니다.
+The completed version of this session can be found at `$REPOSITORY_ROOT/save-points/step-01/complete`.
 
-1. 앞서 실습한 `workshop` 디렉토리가 있다면 삭제하거나 다른 이름으로 바꿔주세요. 예) `workshop-step-01`
-1. 터미널을 열고 아래 명령어를 차례로 실행시켜 실습 디렉토리를 만들고 시작 프로젝트를 복사합니다.
+1. If you have the `workshop` directory from the previous exercise, delete it or rename it. For example: `workshop-step-01`
+1. Open a terminal and run the following commands in order to create the workshop directory and copy the starting project.
 
     ```bash
     # zsh/bash
@@ -357,23 +357,23 @@ save-points/
         Copy-Item -Path $REPOSITORY_ROOT/save-points/step-01/complete/* -Destination $REPOSITORY_ROOT/workshop -Recurse -Force
     ```
 
-1. 워크샵 디렉토리로 이동합니다.
+1. Move to the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 이전 [LLM 접근 권한 설정](#llm-접근-권한-설정)을 따라 LLM 접근 권한을 설정합니다.
-1. 전체 프로젝트를 빌드합니다.
+1. Follow the previous [Setting Up LLM Access](#setting-up-llm-access) section to configure LLM access.
+1. Build the entire project.
 
     ```bash
     dotnet restore && dotnet build
     ```
 
-1. [단일 에이전트 실행](#단일-에이전트-실행) 섹션을 따라합니다.
+1. Follow the [Running the Single Agent](#running-the-single-agent) section.
 
 ---
 
-축하합니다! Microsoft Agent Framework을 활용한 단일 에이전트 백엔드 개발이 끝났습니다. 이제 다음 단계로 이동하세요!
+Congratulations! You have completed developing a single agent backend using Microsoft Agent Framework. Now proceed to the next step!
 
-👈 [00: 개발 환경 설정](./00-setup.md) | [02: Microsoft Agent Framework에 프론트엔드 UI 연동하기](./02-ui-integration-with-maf.md) 👉
+👈 [00: Development Environment Setup](./00-setup.md) | [02: Integrating Frontend UI with Microsoft Agent Framework](./02-ui-integration-with-maf.md) 👉
