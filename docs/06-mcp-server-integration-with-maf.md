@@ -1,26 +1,26 @@
-# 06: Microsoft Agent Framework에 MCP 서버 연동하기
+# 06: Integrating MCP Server with Microsoft Agent Framework
 
-이 세션에서는 앞서 만들었던 [MCP 서버](./05-mcp-server-development.md)를 Microsoft Agent Framework의 백엔드 에이전트에 연동합니다.
+In this session, we will integrate the [MCP server](./05-mcp-server-development.md) we created earlier with the backend agent in Microsoft Agent Framework.
 
-## 세션 목표
+## Session Goals
 
-- MCP 서버를 Microsoft Agent Framework에 연동시킬 수 있습니다.
-- Aspire를 이용해서 프론트엔드 웹 UI와 백엔드 에이전트, LLM 커넥션 및 MCP 서버를 오케스트레이션할 수 있습니다.
-- 전체 애플리케이션을 Azure 클라우드로 배포할 수 있습니다.
+- You will be able to integrate an MCP server with Microsoft Agent Framework.
+- You will be able to orchestrate the frontend web UI, backend agent, LLM connection, and MCP server using Aspire.
+- You will be able to deploy the entire application to Azure cloud.
 
-## 아키텍처
+## Architecture
 
-이 세션이 끝나고 나면 아래와 같은 시스템이 만들어집니다.
+After completing this session, the following system will be created.
 
-![세션 아키텍처](./images/step-06-architecture.png)
+![Session Architecture](./images/step-06-architecture.png)
 
-## 사전 준비 사항
+## Prerequisites
 
-- 이전 [00: 개발 환경 설정](./00-setup.md)에서 개발 환경을 모두 설정한 상태라고 가정합니다.
+- It is assumed that you have completed all the development environment setup in the previous [00: Development Environment Setup](./00-setup.md).
 
-## 리포지토리 루트 설정
+## Repository Root Setup
 
-1. 아래 명령어를 실행시켜 `$REPOSITORY_ROOT` 환경 변수를 설정합니다.
+1. Run the following command to set the `$REPOSITORY_ROOT` environment variable.
 
     ```bash
     # zsh/bash
@@ -102,47 +102,47 @@ save-points/
         Copy-Item -Path $REPOSITORY_ROOT/save-points/step-06/start/* -Destination $REPOSITORY_ROOT/workshop -Recurse -Force
     ```
 
-## 시작 프로젝트 빌드 및 실행
+## Building and Running the Starting Project
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 전체 프로젝트를 빌드합니다.
+1. Build the entire project.
 
     ```bash
     dotnet restore && dotnet build
     ```
 
-1. Aspire 오케스트레이션 애플리케이션을 실행합니다.
+1. Run the Aspire orchestration application.
 
     ```bash
     dotnet watch run --project ./MafWorkshop.AppHost
     ```
 
-1. 자동으로 웹 브라우저가 열리면서 아래와 같은 Aspire 대시보드 페이지가 나타나는지 확인합니다.
+1. Verify that the web browser opens automatically and shows the Aspire dashboard page like below.
 
-   ![Aspire 대시보드 페이지 - MCP 서버 연동 전](./images/step-06-image-01.png)
+   ![Aspire Dashboard Page - Before MCP Server Integration](./images/step-06-image-01.png)
 
-1. 터미널에서 `CTRL`+`C` 키를 눌러 애플리케이션 실행을 종료합니다.
+1. Press `CTRL`+`C` in the terminal to stop the application.
 
-## Observability 및 Traceability 도구 연동 - MCP 서버
+## Integrating Observability and Traceability Tools - MCP Server
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 아래 명령어를 실행시켜 Observability 및 Traceability 도구를 추가합니다.
+1. Run the following command to add Observability and Traceability tools.
 
     ```bash
     dotnet add ./MafWorkshop.McpTodo reference ./MafWorkshop.ServiceDefaults
     ```
 
-1. `./MafWorkshop.McpTodo/Program.cs` 파일을 열고 `// Observability 및 Traceability를 위한 Service Defaults 추가하기` 주석을 찾아 아래 내용을 추가합니다. 이를 통해 다양한 Observability 및 Traceability 기능 관련 인스턴스를 의존성 개체로 등록합니다.
+1. Open the `./MafWorkshop.McpTodo/Program.cs` file and find the comment `// Observability 및 Traceability를 위한 Service Defaults 추가하기` and add the following content. This registers various Observability and Traceability related instances as dependency objects.
 
     ```csharp
     // Observability 및 Traceability를 위한 Service Defaults 추가하기
@@ -189,7 +189,7 @@ save-points/
                        .WithLlmReference(builder.Configuration);
     ```
 
-   **변경후:**
+   **After change:**
 
     ```csharp
     // 백엔드 에이전트 프로젝트 수정하기
@@ -200,15 +200,15 @@ save-points/
                        .WaitFor(mcptodo);
     ```
 
-## Aspire 오케스트레이션 구성 - 백엔드 에이전트
+## Aspire Orchestration Configuration - Backend Agent
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. `./MafWorkshop.Agent/Program.cs` 파일을 열고 `// HttpClientFactory 등록하기` 주석을 찾아 아래 내용을 추가합니다. MCP 서버 커넥션을 Aspire의 `AppHost` 프로젝트에서 대신 해결해 주기 때문에 Aspire에서 전달 받은 `IHttpClientFactory` 인스턴스를 의존성 개체로 등록합니다.
+1. Open the `./MafWorkshop.Agent/Program.cs` file and find the comment `// HttpClientFactory 등록하기` and add the following content. Since the MCP server connection is handled by the Aspire `AppHost` project, register the `IHttpClientFactory` instance received from Aspire as a dependency object.
 
     ```csharp
     // HttpClientFactory 등록하기
@@ -218,7 +218,7 @@ save-points/
     });
     ```
 
-1. 같은 파일에서 `// MCP 클라이언트 등록하기` 주석을 찾아 아래와 같이 입력합니다. 앞서 추가한 `IHttpClientFactory` 인스턴스와 함께 `McpClient` 인스턴스도 함꼐 의존성 개체로 등록합니다.
+1. In the same file, find the comment `// MCP 클라이언트 등록하기` and enter the following. This registers the `McpClient` instance along with the `IHttpClientFactory` instance added earlier as dependency objects.
 
     ```csharp
     // MCP 클라이언트 등록하기
@@ -247,7 +247,7 @@ save-points/
     });
     ```
 
-1. 같은 파일에서 `// Manager 에이전트 추가하기` 주석을 찾아 아래와 같이 입력합니다. 여기서는 To-do 리스트를 관리하는 **Manager** 에이전트를 추가하고 이 에이전트는 MCP 서버가 제공하는 Tool을 에이전트가 사용하는 Tool로 사용하도록 설정합니다.
+1. In the same file, find the comment `// Manager 에이전트 추가하기` and enter the following. Here we add a **Manager** agent that manages the to-do list, and this agent is configured to use the tools provided by the MCP server as agent tools.
 
     ```csharp
     // Manager 에이전트 추가하기
@@ -278,7 +278,7 @@ save-points/
     );
     ```
 
-1. 같은 파일에서 `// AG-UI 미들웨어 설정하기` 주석을 찾아 아래와 같이 입력합니다. `/ag-ui` 엔드포인트를 통해 프론트엔드 웹 UI와 소통할 수 있도록 설정합니다.
+1. In the same file, find the comment `// AG-UI 미들웨어 설정하기` and enter the following. This configures communication with the frontend web UI through the `/ag-ui` endpoint.
 
     ```csharp
     // AG-UI 미들웨어 설정하기
@@ -288,86 +288,86 @@ save-points/
     );
     ```
 
-## 애플리케이션 빌드 및 실행
+## Building and Running the Application
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 전체 프로젝트를 빌드합니다.
+1. Build the entire project.
 
     ```bash
     dotnet restore && dotnet build
     ```
 
-1. Aspire 오케스트레이션 애플리케이션을 실행합니다.
+1. Run the Aspire orchestration application.
 
     ```bash
     dotnet watch run --project ./MafWorkshop.AppHost
     ```
 
-1. 자동으로 웹 브라우저가 열리면서 아래와 같은 Aspire 대시보드 페이지가 나타나는지 확인합니다.
+1. Verify that the web browser opens automatically and shows the Aspire dashboard page like below.
 
-   ![Aspire 대시보드 페이지 - MCP 서버 연동 후](./images/step-06-image-02.png)
+   ![Aspire Dashboard Page - After MCP Server Integration](./images/step-06-image-02.png)
 
-1. 백엔드 에이전트 앱 링크를 클릭해서 Dev UI 화면이 잘 보이는지 확인합니다. 그리고, Manager 에이전트를 선택해서 잘 동작하는지 확인합니다.
+1. Click on the backend agent app link and verify that the Dev UI screen displays correctly. Then, select the Manager agent to verify it works properly.
 
-   ![Dev UI 페이지 - Manager 에이전트](./images/step-06-image-03.png)
+   ![Dev UI Page - Manager Agent](./images/step-06-image-03.png)
 
-1. 프론트엔드 웹 UI 앱 링크를 클릭해서 챗 UI 화면이 잘 보이는지 확인합니다. 그리고, 메시지를 입력해서 결과를 잘 출력하는지 확인합니다.
+1. Click on the frontend web UI app link and verify that the chat UI screen displays correctly. Then, enter a message to verify the output is correct.
 
-   ![웹 UI 페이지](./images/step-06-image-04.png)
+   ![Web UI Page](./images/step-06-image-04.png)
 
-1. 터미널에서 `CTRL`+`C` 키를 눌러 애플리케이션 실행을 종료합니다.
+1. Press `CTRL`+`C` in the terminal to stop the application.
 
-## 애플리케이션 배포 및 실행
+## Deploying and Running the Application
 
-> **NOTE**: Azure 구독을 제공 받았을 경우 진행하세요. 워크샵에 따라 Azure 구독을 제공하지 않을 수도 있습니다.
+> **NOTE**: Proceed if you have been provided with an Azure subscription. Depending on the workshop, an Azure subscription may not be provided.
 
-1. 워크샵 디렉토리에 있는지 다시 한 번 확인합니다.
+1. Verify that you are in the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. 아래 명령어를 실행시켜 MCP 서버를 배포하세요.
+1. Run the following command to deploy the MCP server.
 
     ```bash
     azd up
     ```
 
-   아래와 같은 질문이 나오면 적당하게 입력합니다.
+   When the following questions appear, enter appropriate values.
 
-   - `? Enter a unique environment name:` 👉 환경 이름 (예: `mafworkshop-2026`)
-   - `? Enter a value for the 'apiKey' infrastructure secured parameter:` 👉 API 키 값 입력
-   - `? Enter a value for the 'location' infrastructure parameter:` 👉 지역 선택 (예: `Korea Central`)
+   - `? Enter a unique environment name:` 👉 Environment name (e.g., `mafworkshop-2026`)
+   - `? Enter a value for the 'apiKey' infrastructure secured parameter:` 👉 Enter API key value
+   - `? Enter a value for the 'location' infrastructure parameter:` 👉 Select region (e.g., `Korea Central`)
 
-   잠시 기다리면 프론트엔드 웹 UI, 백엔드 에이전트 및 MCP 서버를 배포한 Azure Container Apps 인스턴스가 각각 만들어진 것을 확인할 수 있습니다.
+   Wait a moment and you can verify that the Azure Container Apps instances for the frontend web UI, backend agent, and MCP server have been created.
 
-   ![애플리케이션 배포 결과](./images/step-06-image-05.png)
+   ![Application Deployment Result](./images/step-06-image-05.png)
 
-1. 위 스크린샷의 `webui` 링크를 클릭해서 웹 UI 화면이 나오면 아래와 비슷하게 프롬프트를 입력한 후 결과를 확인합니다.
+1. Click on the `webui` link in the screenshot above and when the web UI screen appears, enter prompts similar to the following and verify the results.
 
     ```text
-    - 오늘 할 일 보여줘
-    - 오후 2시 미팅 추가해줘
+    - Show me today's tasks
+    - Add a 2pm meeting
     ```
 
-   ![애플리케이션 실행 결과](./images/step-06-image-06.png)
+   ![Application Execution Result](./images/step-06-image-06.png)
 
-1. 아래 명령어를 실행시켜 방금 배포한 애플리케이션을 모두 삭제합니다.
+1. Run the following command to delete all the applications you just deployed.
 
     ```bash
     azd down --purge --force
 
-## 완성본 결과 확인
+## Verifying the Complete Result
 
-이 세션의 완성본은 `$REPOSITORY_ROOT/save-points/step-06/complete`에서 확인할 수 있습니다.
+The completed version of this session can be found at `$REPOSITORY_ROOT/save-points/step-06/complete`.
 
-1. 앞서 실습한 `workshop` 디렉토리가 있다면 삭제하거나 다른 이름으로 바꿔주세요. 예) `workshop-step-06`
-1. 터미널을 열고 아래 명령어를 차례로 실행시켜 실습 디렉토리를 만들고 시작 프로젝트를 복사합니다.
+1. If you have a `workshop` directory from the previous exercise, delete it or rename it. Example: `workshop-step-06`
+1. Open a terminal and run the following commands in order to create the exercise directory and copy the starting project.
 
     ```bash
     # zsh/bash
@@ -381,17 +381,17 @@ save-points/
         Copy-Item -Path $REPOSITORY_ROOT/save-points/step-06/complete/* -Destination $REPOSITORY_ROOT/workshop -Recurse -Force
     ```
 
-1. 워크샵 디렉토리로 이동합니다.
+1. Navigate to the workshop directory.
 
     ```bash
     cd $REPOSITORY_ROOT/workshop
     ```
 
-1. [애플리케이션 빌드 및 실행](#애플리케이션-빌드-및-실행) 섹션을 따라합니다.
-1. [애플리케이션 배포 및 실행](#애플리케이션-배포-및-실행) 섹션을 따라합니다.
+1. Follow the [Building and Running the Application](#building-and-running-the-application) section.
+1. Follow the [Deploying and Running the Application](#deploying-and-running-the-application) section.
 
 ---
 
-축하합니다! 백엔드 에이전트에 MCP 서버를 직접 연동해 봤습니다. 이제 다음 단계로 이동하세요!
+Congratulations! You have integrated an MCP server with the backend agent. Now proceed to the next step!
 
-👈 [05: MCP 서버 개발하기](./05-mcp-server-development.md) | [07: Copilot Studio에서 에이전트 개발하고 MCP 서버 연동하기 **(선택)**](./07-mcp-server-integration-with-copilot-studio.md) 👉
+👈 [05: Developing MCP Server](./05-mcp-server-development.md) | [07: Developing an Agent in Copilot Studio and Integrating MCP Server **(Optional)**](./07-mcp-server-integration-with-copilot-studio.md) 👉
